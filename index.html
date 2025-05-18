@@ -10,6 +10,18 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .changing {
+      animation: pulse 0.5s;
+      color: var(--primary-color);
+    }
+  </style>
 </head>
 
 <body>
@@ -41,109 +53,76 @@
     </div>
     <h2 class="section-title">Nearby Parking Lots</h2>
 
-    <section class="lot-wrapper">
-      <div class="lot-card low dorm1">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3> NDHU Dormitory I</h3>
-          <p>Available: 2/30</p>
-          <small>0.3 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.89399,121.53557" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="camera.html?label=NDHU+Dormitory+I&videoSrc=https%3A%2F%2Fspncee.github.io%2FSlotSense%2Fvideo%2Fdorm1.mp4&status=Available"
-              target="_blank" class="redirect-link">Camera View</a>
-          </div>
-        </div>
-        <div class="right-bar">LOW</div>
-      </div>
-
-
-      <div class="lot-card low admin">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3>Administration</h3>
-          <p>Available: 5/40</p>
-          <small>0.4 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.89426,121.54274" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="camera.html?label=Administration+Building&videoSrc=https%3A%2F%2Fspncee.github.io%2FSlotSense%2Fvideo%2Fadministration.mp4&status=Full"
-              target="_blank" class="redirect-link">Camera View</a>
-            <a href="free.html?label=Free+Slot+View&videoSrc=video/Eastside.mp4&status=Available" target="_blank"
-              class="redirect-link">Free Slot</a>
-          </div>
-        </div>
-        <div class="right-bar">LOW</div>
-      </div>
-
-      <div class="lot-card critical csie">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3>CSIE Parking Lot</h3>
-          <p>Available: 25/30</p>
-          <small>0.6 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.89892,121.54332" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="camera.html?label=CSIE%20Parking%202&videoSrc=%2FUsers%2Fspence%2FDesktop%2Fwebsite-slotsense%2F%28%E7%90%86%E5%B7%A5%E4%BA%8C%E9%A4%A8%29Science%20and%20Engineering%20Building%20II.mp4&status=Available"
-              target="_blank" class="redirect-link">Camera View</a>
-          </div>
-        </div>
-        <div class="right-bar">CRITICAL</div>
-      </div>
-
-      <div class="lot-card high dorm2">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3> NDHU Dormitory II</h3>
-          <p>Available: 18/50</p>
-          <small>0.2 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.89563,121.53394" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="camera.html?label=NDHU+Dormitory&videoSrc=file%3A%2F%2F%2FUsers%2Fspence%2FDesktop%2FLennox%2Fcar-parking-finder%2Fdata%2Fsource%2Ftest-feed.mp4&status=Available"
-              target="_blank" class="redirect-link">Camera View</a>
-          </div>
-        </div>
-        <div class="right-bar">HIGH</div>
-      </div>
-
-      <div class="lot-card critical eastside">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3>Eastside Community Centre</h3>
-          <p>Available: 14/15</p>
-          <small>0.9 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.90224,121.54748" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="live.html#dormitory1" target="_blank" class="redirect-link">Camera View</a>
-          </div>
-        </div>
-        <div class="right-bar">CRITICAL</div>
-      </div>
-
-      <div class="lot-card high zhixue">
-        <div class="left-bar"></div>
-        <div class="lot-content">
-          <h3>NDHU Zhixue Parking</h3>
-          <p>Available: 8/15</p>
-          <small>0.5 miles away</small>
-          <div class="lot-redirect">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=23.90403,121.53657" target="_blank"
-              class="redirect-link">Directions</a>
-            <a href="live.html#dormitory1" target="_blank" class="redirect-link">Camera View</a>
-            <a href="free.html?label=Free+Slot+View&videoSrc=video/Eastside.mp4&status=Available" target="_blank"
-              class="redirect-link">Free Slot</a>
-          </div>
-        </div>
-        <div class="right-bar">HIGH</div>
-      </div>
+    <section class="lot-wrapper" id="parkingLotsContainer">
+      <!-- Parking lots will be generated dynamically -->
     </section>
   </main>
 
   <script>
+    // Parking lots data
+    const parkingLots = [
+      {
+        id: 'dorm1',
+        name: 'NDHU Dormitory I',
+        total: 30,
+        available: 2,
+        distance: 0.3,
+        coords: [23.89399, 121.53557],
+        videoSrc: 'https://spncee.github.io/SlotSense/video/dorm1.mp4',
+        freeSlot: false
+      },
+      {
+        id: 'admin',
+        name: 'Administration',
+        total: 40,
+        available: 5,
+        distance: 0.4,
+        coords: [23.89426, 121.54274],
+        videoSrc: 'https://spncee.github.io/SlotSense/video/administration.mp4',
+        freeSlot: true
+      },
+      {
+        id: 'csie',
+        name: 'CSIE Parking Lot',
+        total: 30,
+        available: 25,
+        distance: 0.6,
+        coords: [23.89892, 121.54332],
+        videoSrc: '',
+        freeSlot: false
+      },
+      {
+        id: 'dorm2',
+        name: 'NDHU Dormitory II',
+        total: 50,
+        available: 18,
+        distance: 0.2,
+        coords: [23.89563, 121.53394],
+        videoSrc: '',
+        freeSlot: false
+      },
+      {
+        id: 'eastside',
+        name: 'Eastside Community Centre',
+        total: 15,
+        available: 14,
+        distance: 0.9,
+        coords: [23.90224, 121.54748],
+        videoSrc: '',
+        freeSlot: false
+      },
+      {
+        id: 'zhixue',
+        name: 'NDHU Zhixue Parking',
+        total: 15,
+        available: 8,
+        distance: 0.5,
+        coords: [23.90403, 121.53657],
+        videoSrc: '',
+        freeSlot: true
+      }
+    ];
+
     document.addEventListener('DOMContentLoaded', function () {
       // Apply accent color
       const savedColor = localStorage.getItem('themeColor') || 'blue';
@@ -153,6 +132,9 @@
       const darkMode = localStorage.getItem('darkMode') === 'true';
       document.body.classList.toggle('dark', darkMode);
 
+      // Generate parking cards
+      generateParkingCards();
+
       // Apply parking preferences
       applyParkingPreferences();
 
@@ -161,32 +143,86 @@
         initMapWithRouting();
       }
 
+      // Start simulating parking activity
+      setInterval(simulateParkingActivity, 3000 + Math.random() * 5000);
+
       // Dark mode toggle functionality
-      const toggle = document.getElementById('modeToggle');
-      const moonIcon = document.getElementById('moonIcon');
-      const sunIcon = document.getElementById('sunIcon');
-
-      function updateDarkMode(isDark) {
-        if (isDark) {
-          document.body.classList.add('dark');
-          if (moonIcon) moonIcon.style.display = 'none';
-          if (sunIcon) sunIcon.style.display = 'inline';
-        } else {
-          document.body.classList.remove('dark');
-          if (moonIcon) moonIcon.style.display = 'inline';
-          if (sunIcon) sunIcon.style.display = 'none';
-        }
-      }
-
-      if (toggle) {
-        toggle.addEventListener('click', function () {
-          const isDark = !document.body.classList.contains('dark');
-          document.body.classList.toggle('dark');
-          localStorage.setItem('darkMode', isDark);
-          updateDarkMode(isDark);
-        });
-      }
+      setupDarkModeToggle();
     });
+
+    function generateParkingCards() {
+      const container = document.getElementById('parkingLotsContainer');
+      container.innerHTML = '';
+      
+      parkingLots.forEach(lot => {
+        const status = getParkingStatus(lot.available, lot.total);
+        const card = document.createElement('div');
+        card.className = `lot-card ${status} ${lot.id}`;
+        card.innerHTML = `
+          <div class="left-bar"></div>
+          <div class="lot-content">
+            <h3>${lot.name}</h3>
+            <p>Available: <span class="available-count">${lot.available}</span>/<span class="total-count">${lot.total}</span></p>
+            <small>${lot.distance} miles away</small>
+            <div class="lot-redirect">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${lot.coords[0]},${lot.coords[1]}" target="_blank" class="redirect-link">Directions</a>
+              ${lot.videoSrc ? `<a href="camera.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.videoSrc)}&status=${status}" target="_blank" class="redirect-link">Camera View</a>` : ''}
+              ${lot.freeSlot ? '<a href="free.html?label=Free+Slot+View&videoSrc=video/Eastside.mp4&status=Available" target="_blank" class="redirect-link">Free Slot</a>' : ''}
+            </div>
+          </div>
+          <div class="right-bar">${status.toUpperCase()}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function getParkingStatus(available, total) {
+      const availablePercentage = (available / total) * 100;
+      
+      if (availablePercentage > 40) { // More than 40% available
+        return 'low';
+      } else if (availablePercentage > 15) { // 15-40% available
+        return 'high';
+      } else { // 0-15% available
+        return 'critical';
+      }
+    }
+
+    function simulateParkingActivity() {
+      parkingLots.forEach(lot => {
+        // Random change (-3 to +3, but within bounds)
+        const change = Math.floor(Math.random() * 7) - 3;
+        let newAvailable = lot.available + change;
+        newAvailable = Math.max(0, Math.min(lot.total, newAvailable));
+        
+        if (newAvailable !== lot.available) {
+          lot.available = newAvailable;
+          updateParkingCard(lot);
+        }
+      });
+    }
+
+    function updateParkingCard(lot) {
+      const card = document.querySelector(`.lot-card.${lot.id}`);
+      if (!card) return;
+      
+      const status = getParkingStatus(lot.available, lot.total);
+      const availableCount = card.querySelector('.available-count');
+      const rightBar = card.querySelector('.right-bar');
+      
+      // Update available count with animation
+      availableCount.classList.add('changing');
+      setTimeout(() => {
+        availableCount.textContent = lot.available;
+        availableCount.classList.remove('changing');
+      }, 250);
+      
+      // Update status if changed
+      if (!card.classList.contains(status)) {
+        card.className = `lot-card ${status} ${lot.id}`;
+        rightBar.textContent = status.toUpperCase();
+      }
+    }
 
     function applyParkingPreferences() {
       const preferredLotId = localStorage.getItem('preferredLot') || 'any';
@@ -216,10 +252,13 @@
       }
 
       if (distanceUnit === 'kilometers') {
-        document.querySelectorAll('.distance').forEach(el => {
-          const miles = parseFloat(el.textContent);
-          const km = (miles * 1.60934).toFixed(1);
-          el.textContent = `${km} km away`;
+        document.querySelectorAll('small').forEach(el => {
+          const text = el.textContent;
+          if (text.includes('miles')) {
+            const miles = parseFloat(text);
+            const km = (miles * 1.60934).toFixed(1);
+            el.textContent = `${km} km away`;
+          }
         });
       }
     }
@@ -231,15 +270,6 @@
       let userLocationMarker = null;
       let userLocationCircle = null;
       let routingControl = null;
-
-      const lots = [
-        { name: 'Dormitory 1', status: 'low', coords: [23.893910605816526, 121.53556337004868], element: document.querySelector('.lot-card.dorm1') },
-        { name: 'Administration', status: 'low', coords: [23.89426, 121.54274], element: document.querySelector('.lot-card.admin') },
-        { name: 'Dormitory 2', status: 'low', coords: [23.89563, 121.53394], element: document.querySelector('.lot-card.dorm2') },
-        { name: 'CSIE Parking Lot', status: 'critical', coords: [23.89892, 121.54332], element: document.querySelector('.lot-card.csie') },
-        { name: 'Jishui Entrance', status: 'high', coords: [23.90403, 121.53657], element: document.querySelector('.lot-card.zhixue') },
-        { name: 'Eastside Community Centre', status: 'critical', coords: [23.90224, 121.54748], element: document.querySelector('.lot-card.eastside') }
-      ];
 
       routingControl = L.Routing.control({
         waypoints: [],
@@ -297,23 +327,25 @@
         ]);
       }
 
-      lots.forEach(lot => {
+      parkingLots.forEach(lot => {
+        const status = getParkingStatus(lot.available, lot.total);
         const marker = L.marker(lot.coords, {
           icon: L.divIcon({
-            className: `parking-marker ${lot.status}`,
+            className: `parking-marker ${status}`,
             html: '🅿️',
             iconSize: [50, 50]
           })
-        }).addTo(map).bindPopup(`<strong>${lot.name}</strong><br>Status: ${lot.status.toUpperCase()}`);
+        }).addTo(map).bindPopup(`<strong>${lot.name}</strong><br>Status: ${status.toUpperCase()}`);
 
         marker.on('click', function () {
           showRouteTo(lot.coords);
           document.querySelectorAll('.lot-card').forEach(c => c.classList.remove('selected'));
-          if (lot.element) lot.element.classList.add('selected');
+          document.querySelector(`.lot-card.${lot.id}`)?.classList.add('selected');
         });
 
-        if (lot.element) {
-          lot.element.addEventListener('click', function () {
+        const card = document.querySelector(`.lot-card.${lot.id}`);
+        if (card) {
+          card.addEventListener('click', function () {
             showRouteTo(lot.coords);
             document.querySelectorAll('.lot-card').forEach(c => c.classList.remove('selected'));
             this.classList.add('selected');
@@ -328,6 +360,33 @@
       map.on('locationfound', onLocationFound);
       map.on('locationerror', onLocationError);
       map.locate({ watch: true, setView: false, maxZoom: 216, enableHighAccuracy: true });
+    }
+
+    function setupDarkModeToggle() {
+      const toggle = document.getElementById('modeToggle');
+      const moonIcon = document.getElementById('moonIcon');
+      const sunIcon = document.getElementById('sunIcon');
+
+      function updateDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add('dark');
+          if (moonIcon) moonIcon.style.display = 'none';
+          if (sunIcon) sunIcon.style.display = 'inline';
+        } else {
+          document.body.classList.remove('dark');
+          if (moonIcon) moonIcon.style.display = 'inline';
+          if (sunIcon) sunIcon.style.display = 'none';
+        }
+      }
+
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          const isDark = !document.body.classList.contains('dark');
+          document.body.classList.toggle('dark');
+          localStorage.setItem('darkMode', isDark);
+          updateDarkMode(isDark);
+        });
+      }
     }
   </script>
   <script src="common.js"></script>
