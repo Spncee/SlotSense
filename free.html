@@ -166,6 +166,9 @@
             container.innerHTML = `
         <video src="${videoSrc}" controls autoplay muted loop></video>
       `;
+        
+                    const playbackSpeed = parseFloat(new URLSearchParams(window.location.search).get('playbackSpeed')) || .5;
+            video.playbackRate = playbackSpeed;
         }
 
         // Dark mode toggle script
