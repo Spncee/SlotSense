@@ -152,15 +152,15 @@
       setupDarkModeToggle();
     });
 
-function generateParkingCards() {
-  const container = document.getElementById('parkingLotsContainer');
-  container.innerHTML = '';
-  
-  parkingLots.forEach(lot => {
-    const status = getParkingStatus(lot.available, lot.total);
-    const card = document.createElement('div');
-    card.className = `lot-card ${status} ${lot.id}`;
-    card.innerHTML = `
+    function generateParkingCards() {
+      const container = document.getElementById('parkingLotsContainer');
+      container.innerHTML = '';
+
+      parkingLots.forEach(lot => {
+        const status = getParkingStatus(lot.available, lot.total);
+        const card = document.createElement('div');
+        card.className = `lot-card ${status} ${lot.id}`;
+        card.innerHTML = `
       <div class="left-bar"></div>
       <div class="lot-content">
         <h3>${lot.name}</h3>
@@ -169,14 +169,20 @@ function generateParkingCards() {
         <div class="lot-redirect">
           <a href="https://www.google.com/maps/dir/?api=1&destination=${lot.coords[0]},${lot.coords[1]}" target="_blank" class="redirect-link">Directions</a>
           ${lot.videoSrc ? `<a href="camera.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.videoSrc)}&status=${status}" target="_blank" class="redirect-link">Camera View</a>` : ''}
-          ${lot.freeSlot ? `<a href="free.html?label=${encodeURIComponent(lot.name + ' Free Slot')}&videoSrc=${encodeURIComponent(lot.freeSlotVideo || 'video/default-free.mp4')}&status=${status}" target="_blank" class="redirect-link">Free Slot</a>` : ''}
+          ${lot.freeSlot ? `
+            <a href="free.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.freeSlotVideo)}&playbackSpeed=0.5" 
+               target="_blank" 
+               class="redirect-link">
+               Free Slot
+            </a>
+          ` : ''}
         </div>
       </div>
       <div class="right-bar">${status.toUpperCase()}</div>
     `;
-    container.appendChild(card);
-  });
-}
+        container.appendChild(card);
+      });
+    }
 
     function getParkingStatus(available, total) {
       const availablePercentage = (available / total) * 100;
