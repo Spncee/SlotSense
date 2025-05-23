@@ -174,11 +174,11 @@
   <a href="https://www.google.com/maps/dir/?api=1&destination=${lot.coords[0]},${lot.coords[1]}" class="redirect-link">Directions</a>
   ${lot.videoSrc ? `<a href="camera.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.videoSrc)}&status=${status}" class="redirect-link">Camera View</a>` : ''}
   ${lot.freeSlot ? `
-    <a href="free.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.freeSlotVideo)}&playbackSpeed=0.5" 
-       class="redirect-link">
-       Free Slot
-    </a>
-  ` : ''}
+  <a href="free.html?label=${encodeURIComponent(lot.name)}&videoSrc=${encodeURIComponent(lot.freeSlotVideo)}&playbackSpeed=0.5" 
+     class="redirect-link">
+     Free Slot
+  </a>
+` : ''}
 </div>
       </div>
       <div class="right-bar">${status.toUpperCase()}</div>
